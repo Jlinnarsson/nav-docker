@@ -16,14 +16,15 @@ RUN Add-WindowsFeature Web-Server,web-AppInit,web-Asp-Net45,web-Windows-Auth,web
     Set-Service 'W3SVC' -startuptype manual ; \
     Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters' -Name ServerPriorityTimeLimit -Value 0 -Type DWord; \
     Set-ItemProperty -Path "HKLM:\system\CurrentControlSet\control" -name ServicesPipeTimeout -Value 300000 -Type DWORD -Force; \
-    Invoke-WebRequest -Uri 'https://bcartifacts.blob.core.windows.net/prerequisites/SQLEXPR2019_X64_ENU.EXE' -OutFile sqlexpress.exe ; \
+    #Invoke-WebRequest -Uri 'https://bcartifacts.blob.core.windows.net/prerequisites/SQLEXPR2019_X64_ENU.EXE' -OutFile sqlexpress.exe ; \
+    Invoke-WebRequest -Uri 'https://download.microsoft.com/download/5/1/4/5145fe04-4d30-4b85-b0d1-39533663a2f1/SQL2022-SSEI-Expr.exe' -OutFile sqlexpress.exe ; \
     Start-Process -Wait -FilePath .\sqlexpress.exe -ArgumentList /qs, /x:setup ; \
     .\setup\setup.exe /q /ACTION=Install /INSTANCENAME=SQLEXPRESS /FEATURES=SQLEngine /UPDATEENABLED=0 /SQLSVCACCOUNT='NT AUTHORITY\System' /SQLSYSADMINACCOUNTS='BUILTIN\Administrators' /TCPENABLED=1 /NPENABLED=0 /IACCEPTSQLSERVERLICENSETERMS ; \
     While (!(get-service 'MSSQL$SQLEXPRESS' -ErrorAction SilentlyContinue)) { Start-Sleep -Seconds 5 } ; \
     Stop-Service 'MSSQL$SQLEXPRESS' ; \
-    Set-itemproperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql15.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpdynamicports -value '' ; \
-    Set-itemproperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql15.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpport -value 1433 ; \
-    Set-itemproperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql15.SQLEXPRESS\mssqlserver\' -name LoginMode -value 2 ; \
+    Set-itemproperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpdynamicports -value '' ; \
+    Set-itemproperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\supersocketnetlib\tcp\ipall' -name tcpport -value 1433 ; \
+    Set-itemproperty -path 'HKLM:\software\microsoft\microsoft sql server\mssql16.SQLEXPRESS\mssqlserver\' -name LoginMode -value 2 ; \
     Set-Service 'MSSQL$SQLEXPRESS' -startuptype manual ; \
     Set-Service 'SQLTELEMETRY$SQLEXPRESS' -startuptype manual ; \
     Set-Service 'SQLWriter' -startuptype manual ; \
